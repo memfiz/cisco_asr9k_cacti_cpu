@@ -1,0 +1,31 @@
+<interface>
+   <name>Get IOS-XR MIB CPU's</name>
+   <script_path>/usr/bin/env python /opt/cacti/scripts/script_get_cisco_iosxr_cpu_stats.py</script_path>
+   <arg_prepend>|host_hostname| |host_snmp_community|</arg_prepend>
+   <arg_index>index</arg_index>
+   <arg_query>query</arg_query>
+   <arg_get>get</arg_get>
+   <arg_num_indexes>num_indexes</arg_num_indexes>
+   <output_delimeter>:</output_delimeter>
+   <index_order>CPUIndex</index_order>
+   <index_order_type>numeric</index_order_type>
+   <index_title_format>|chosen_order_field|</index_title_format>
+
+   <fields>
+      <CPUIndex>
+         <name>CPU Index</name>
+         <direction>input</direction>
+         <query_name>index</query_name>
+      </CPUIndex>
+      <module_name>
+         <name>Module Name</name>
+         <direction>input</direction>
+         <query_name>query</query_name>
+      </module_name>
+      <cpu5min>
+         <name>CPU 5 Minute Usage</name>
+         <direction>output</direction>
+         <query_name>cpu5min</query_name>
+      </cpu5min>
+   </fields>
+</interface>
