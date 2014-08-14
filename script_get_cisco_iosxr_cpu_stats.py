@@ -18,7 +18,10 @@ CPU5_OID = 'snmpget -v2c -c %s %s .1.3.6.1.4.1.9.9.109.1.1.1.1.8.%s'
 def get_cpu_index():
   reparse = re.compile('\.(\d+)\s\=\sINTEGER\:\s(\d+)')
   re_nameoid = re.compile('\.(\d+)\s\=\sSTRING\:\s\"([^\"]+)\"')
-  out = subprocess.check_output(IDX_OID, shell=True)
+  #disabled only works for > 2.7
+  #out = subprocess.check_output(IDX_OID, shell=True)
+  #for python < 2.7
+  out = subprocess.Popen(['snmpwalk', '-v2c', '-c', COMMUNITY, HOST, '.1.3.6.1.4.1.9.9.109.1.1.1.1.2'], stdout=subprocess.PIPE).communicate()[0]
   if DEBUG: print out
   out = out.split('\n')
   dic = {}
@@ -35,7 +38,10 @@ def get_cpu_index():
         continue
       cpu_phyname_idx = reparse.search(line).group(2)
       if DEBUG: print cpu_idx, cpu_phyname_idx
-      get_out = subprocess.check_output(NAME_OID % (COMMUNITY, HOST, cpu_phyname_idx), shell=True)
+      #disabled only works for > 2.7
+      #get_out = subprocess.check_output(NAME_OID % (COMMUNITY, HOST, cpu_phyname_idx), shell=True)
+      #for python < 2.7
+      get_out = subprocess.Popen(['snmpget', '-v2c', '-c', COMMUNITY, HOST, '.1.3.6.1.2.1.47.1.1.1.1.7.%s' % cpu_phyname_idx], stdout=subprocess.PIPE).communicate()[0]
       if DEBUG: print get_out
       get_out = get_out.split('\n')
       for na in get_out:
@@ -52,7 +58,10 @@ def get_cpu_index():
 
 def get_index(idx):
   reparse = re.compile('\.(\d+)\s\=\sGauge32\:\s(\d+)', re.DOTALL)
-  out = subprocess.check_output(CPU5_OID % (COMMUNITY, HOST, idx), shell=True)
+  #disabled only works for > 2.7
+  #out = subprocess.check_output(CPU5_OID % (COMMUNITY, HOST, idx), shell=True)
+  #for python < 2.7
+  out = subprocess.Popen(['snmpget', '-v2c', '-c', COMMUNITY, HOST, '.1.3.6.1.4.1.9.9.109.1.1.1.1.8.%s' % idx], stdout=subprocess.PIPE).communicate()[0]
   if reparse.search(out):
     return reparse.search(out).group(2)
   return '0'
@@ -75,6 +84,7 @@ if __name__ == "__main__":
     get_cpu_index()
   else:
     print ''' 
-script_get_cisco_iosxr_cpu_stats.py 1.1.1.1 public query
-script_get_cisco_iosxr_cpu_stats.py 1.1.1.1 piblic get 66
+script_get_cisco_iosxr_cpu_stats.py 1.1.1.1 public query index
+script_get_cisco_iosxr_cpu_stats.py 1.1.1.1 public get index 66
 '''
+
